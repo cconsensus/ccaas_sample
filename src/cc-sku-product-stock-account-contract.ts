@@ -1,7 +1,7 @@
 import { Context, Contract, Info, Param, Returns, Transaction } from 'fabric-contract-api';
 import { Iterators } from 'fabric-shim-api';
 import { CcItemDocument, CcSkuProductStockAccount, CcSkuProductStockAccountKey, QueryCcSkuProductStockAccount } from './cc-sku-product-stock-account';
-import { createCompositeKey, logger, NotFoundStockDocumentError, UpdateSkuProductAccountError } from './cc-sku-product-stock-account-util';
+import { createCompositeKey, initLedgerObjs, logger, NotFoundStockDocumentError } from './cc-sku-product-stock-account-util';
 
 @Info({
   title: 'cc-sku-product-stock-account-contract',
@@ -44,6 +44,18 @@ export class CcSkuProductStockAccountContract extends Contract {
     logger(ctx).debug(`==> afterTransaction called by: ${ctx.clientIdentity.getMSPID()}`);
     logger(ctx).debug(`==> afterTransaction Transaction ID: ${ctx.stub.getTxID()}`);
     logger(ctx).debug(`==> afterTransaction Transaction ID: ${ctx.clientIdentity.getIDBytes().toString()}`);
+  }
+
+  /**
+   * Inits the ledger.
+   * @param ctx Context
+   */
+  @Transaction(true)
+  public async initLedger(ctx: Context): Promise<void> {
+    const initObjs: CcSkuProductStockAccount[] = initLedgerObjs();
+    for (const ccSkuProductStockAccount of initObjs) {
+      await this.updateOrCreateSkuProductStockAccount(ctx, ccSkuProductStockAccount);
+    }
   }
 
   /**
@@ -93,26 +105,17 @@ export class CcSkuProductStockAccountContract extends Contract {
     ccSkuProductStockAccountKey.sku = ccItemDocument.sku;
     let account: CcSkuProductStockAccount = await this.getSkuProductStockAccountByKeyWithoutExistsCheck(ctx, ccSkuProductStockAccountKey);
     if (account) {
-      // account exists
-      logger(ctx).debug('===== updateStock account exists =====');
-      // If account exists, update it.
-      logger(ctx).debug('===== account is active account exists =====');
+      logger(ctx).debug('===== Account exists =====');
       isAddOperation ? (account.stock += ccItemDocument.quantity) : (account.stock -= ccItemDocument.quantity);
-      account.updatedAt = ccItemDocument.createdAt;
+      account.description = ccItemDocument.description;
     } else {
-      // there is no account. Need check if we can create it.
-      logger(ctx).debug('===== updateStock account not exists =====');
+      logger(ctx).debug('===== Account not exists =====');
       account = new CcSkuProductStockAccount();
       account.tenantId = ccItemDocument.tenantId;
       account.sku = ccItemDocument.sku;
-      account.createdAt = ccItemDocument.createdAt;
-      account.updatedAt = ccItemDocument.createdAt;
       account.stock = ccItemDocument.quantity;
+      account.description = ccItemDocument.description;
     }
-    if (!account) {
-      throw new UpdateSkuProductAccountError('WEIRD ERROR. UPDATE STOCK ALGORITM IS PRESENTING UNDESIRED RESULTS. CALL THE BUILDERS.');
-    }
-    logger(ctx).debug(`===== updateStock Updating / Creating account - STOCK SET TO: ${account.stock} =====`);
     await this.updateOrCreateSkuProductStockAccount(ctx, account);
     logger(ctx).debug('===== END updateStock =====');
     return account;
@@ -197,24 +200,19 @@ export class CcSkuProductStockAccountContract extends Contract {
   private _buildTheSkuDinamicQuery(queryCcSkuProductStockAccount: QueryCcSkuProductStockAccount): string {
     const selector = {
       assetType: queryCcSkuProductStockAccount.assetType,
-      uuid: {},
       tenantId: {},
       sku: {},
-      sequence: {},
-      createdAt: {},
-      updatedAt: {},
-      isActive: {},
+      description: {},
     };
     queryCcSkuProductStockAccount.tenantId ? (selector.tenantId = queryCcSkuProductStockAccount.tenantId) : (selector.tenantId = undefined);
+    queryCcSkuProductStockAccount.description ? (selector.description = queryCcSkuProductStockAccount.description) : (selector.description = undefined);
     queryCcSkuProductStockAccount.sku ? (selector.sku = queryCcSkuProductStockAccount.sku) : (selector.sku = undefined);
-    queryCcSkuProductStockAccount.createdAt ? (selector.createdAt = queryCcSkuProductStockAccount.createdAt) : (selector.createdAt = undefined);
-    queryCcSkuProductStockAccount.updatedAt ? (selector.updatedAt = queryCcSkuProductStockAccount.updatedAt) : (selector.updatedAt = undefined);
 
     if (!selector) {
       throw new NotFoundStockDocumentError('SKU ACCOUNT DOES NOT EXISTS, unable to query assets. We do not received any parameters!');
     }
 
-    const fields = ['assetType', 'tenantId', 'sku', 'stock', 'createdAt', 'updatedAt'];
+    const fields = ['assetType', 'tenantId', 'sku', 'description', 'stock'];
 
     const couchDbQuery = { selector, fields };
     return JSON.stringify(couchDbQuery);
@@ -223,7 +221,7 @@ export class CcSkuProductStockAccountContract extends Contract {
   /**
    * Paginated item document query
    * @param ctx Context
-   * @param queryCcFiscalDocument QueryCcFiscalDocument
+   * @param queryCcSkuProductStockAccount QueryCcSkuProductStockAccount
    * @returns any
    */
   @Transaction(false)
@@ -242,9 +240,9 @@ export class CcSkuProductStockAccountContract extends Contract {
   }
 
   /**
-   * Query the item document asset
+   * Query sku account
    * @param ctx Context
-   * @param queryCcItemDocument QueryCcItemDocument
+   * @param queryCcSkuProductStockAccount QueryCcSkuProductStockAccount
    * @returns any
    */
   @Transaction(false)
@@ -258,7 +256,7 @@ export class CcSkuProductStockAccountContract extends Contract {
   }
 
   /**
-   * Consulta com query personalizada.
+   * Parametrized query
    * @param ctx
    * @param queryString
    * @param pageSize
@@ -279,11 +277,10 @@ export class CcSkuProductStockAccountContract extends Contract {
   }
 
   /**
-   * Get History
-   * @param ctx
-   * @param tenantId
-   * @param sku
-   * @param sequence
+   *
+   * @param ctx Context
+   * @param ccSkuProductStockAccountKey CcSkuProductStockAccountKey
+   * @returns Promise<any>
    */
   @Transaction(false)
   @Returns('any')

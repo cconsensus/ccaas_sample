@@ -57,10 +57,6 @@ export class CcSkuProductStockAccount {
   public stock: number;
   @Property()
   public description: string;
-  @Property()
-  public createdAt: string;
-  @Property()
-  public updatedAt: string;
 }
 
 /**
@@ -88,9 +84,7 @@ export class QueryCcSkuProductStockAccount {
   @Property()
   public sku: string;
   @Property()
-  public createdAt: string;
-  @Property()
-  public updatedAt: string;
+  public description: string;
   @Property()
   public pageSize: number;
   @Property()

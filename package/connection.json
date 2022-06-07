@@ -1,5 +1,5 @@
 {
-    "address": "ccskuproductstockaccount.192.168.33.22.nip.io:9997",
+    "address": "ccskuproductstockaccount.127.0.0.1.nip.io:9997",
     "dial_timeout": "10s",
     "tls_required": false
 }

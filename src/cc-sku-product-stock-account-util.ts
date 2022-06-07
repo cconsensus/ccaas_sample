@@ -1,11 +1,37 @@
 import { Context } from 'fabric-contract-api';
-import { EventPayload } from './cc-sku-product-stock-account';
+import { CcSkuProductStockAccount, EventPayload } from './cc-sku-product-stock-account';
 import { X509 } from 'jsrsasign';
-
 import { Logger } from 'winston';
 
 export const logger = (ctx: Context): Logger => {
   return ctx.logging.getLogger();
+};
+
+/**
+ *Creates the initial graph to init the ledger.
+ * @returns CcSkuProductStockAccount[]
+ */
+export const initLedgerObjs = (): CcSkuProductStockAccount[] => {
+  const initLedgerObjs: CcSkuProductStockAccount[] = [];
+  let obj = new CcSkuProductStockAccount();
+  obj.description = 'Coke';
+  obj.sku = '0012';
+  obj.stock = 0;
+  obj.tenantId = 'tenantId001';
+  initLedgerObjs.push(obj);
+  obj = new CcSkuProductStockAccount();
+  obj.description = 'Orange Juice';
+  obj.sku = '0013';
+  obj.stock = 10;
+  obj.tenantId = 'tenantId001';
+  initLedgerObjs.push(obj);
+  obj = new CcSkuProductStockAccount();
+  obj.description = 'Canastra Cheese';
+  obj.sku = '0014';
+  obj.stock = 102;
+  obj.tenantId = 'tenantId001';
+  initLedgerObjs.push(obj);
+  return initLedgerObjs;
 };
 
 /**
