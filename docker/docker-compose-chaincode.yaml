@@ -11,7 +11,7 @@ services:
     peer0org1.ccskuproductstockaccount.cconsensus.com.br:
         image: cconsensus/ccskuproductstockaccount:1.0.0
         container_name: peer0org1.ccskuproductstockaccount.cconsensus.com.br
-        hostname: peer0org1.ccskuproductstockaccount.cconsensus.com.br
+        hostname: peer0org1.ccskuproductstockaccount.192.168.33.22.nip.io
         environment:
             - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
             - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric_test
@@ -22,8 +22,9 @@ services:
             - LOG_CONSOLE_STDOUT=true
             - GOPATH=/opt/gopath
             - TZ=America/Sao_Paulo
-            - CHAINCODE_SERVER_ADDRESS=peer0org1.ccskuproductstockaccount.cconsensus.com.br:9997
-            - CHAINCODE_ID=ccskuproductstockaccount:82a9448370182efdd10db774f06ed75499029bde367acbea94a85eb5c41a98d5
+            - CHAINCODE_SERVER_ADDRESS=peer0org1.ccskuproductstockaccount.192.168.33.22.nip.io:9997
+            - CHAINCODE_ID=ccskuproductstockaccount:25141c2188b022013cdf687645fc6d665d9badfe56210bb94330544772765eb7
+            - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
         expose:
             - 9997
         networks:
@@ -32,7 +33,7 @@ services:
     peer0org2.ccskuproductstockaccount.cconsensus.com.br:
         image: cconsensus/ccskuproductstockaccount:1.0.0
         container_name: peer0org2.ccskuproductstockaccount.cconsensus.com.br
-        hostname: peer0org2.ccskuproductstockaccount.cconsensus.com.br
+        hostname: peer0org2.ccskuproductstockaccount.192.168.33.22.nip.io
         environment:
             - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
             - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric_test
@@ -43,9 +44,10 @@ services:
             - LOG_CONSOLE_STDOUT=true
             - GOPATH=/opt/gopath
             - TZ=America/Sao_Paulo
-            - CHAINCODE_SERVER_ADDRESS=peer0org2.ccskupccskuproductstockaccountroduct.cconsensus.com.br:9997
-            - CHAINCODE_ID=ccskuproductstockaccount:82a9448370182efdd10db774f06ed75499029bde367acbea94a85eb5c41a98d5
+            - CHAINCODE_SERVER_ADDRESS=peer0org2.ccskuproductstockaccount.192.168.33.22.nip.io:9998
+            - CHAINCODE_ID=ccskuproductstockaccount:25141c2188b022013cdf687645fc6d665d9badfe56210bb94330544772765eb7
+            - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
         expose:
-            - 9997
+            - 9998
         networks:
             - fabric_test
