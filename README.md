@@ -1,13 +1,14 @@
 # CCONSENSUS STOCK SKU ACCOUNT SUPPLY
 
 ![DEVELOPMENT](http://img.shields.io/static/v1?label=STATUS&message=DEVELOPMENT&color=YELLOW&style=for-the-badge)
+
 Hyperledger Fabric Smart Contract for enabling track supply stock skus (The product supply accounts)
 This was developed as base to show CCAAS deployment strategy and enable chaincode debug.
 
 ## VERSION AND HINTS
 
-:computer: NodeJS: v16.15.1
-:computer: npm: 8.11.0
+![npm](https://img.shields.io/badge/npm-v8.11.0-blue)
+![node](https://img.shields.io/badge/node-v16.15.1-blue)
 
 This is a NodeJS (Typescript) developed chaincode. Tested with Hyperledger Fabric Test Network
 of [Fabric Samples](https://github.com/hyperledger/fabric-samples) running Hyperledger Fabric version 2.4.3:
