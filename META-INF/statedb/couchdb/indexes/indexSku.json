@@ -1,0 +1,10 @@
+{
+    "index": {
+        "fields": [
+            "sku"
+        ]
+    },
+    "ddoc": "indexSkuDoc",
+    "name": "indexSku",
+    "type": "json"
+}

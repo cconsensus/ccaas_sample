@@ -1,0 +1,48 @@
+{
+    "name": "cc-sku-product-stock-account",
+    "version": "1.0.2",
+    "description": "Chaincode / Smart Contract with a set of operations to dealing with assets representating sku product stock accounts. This is a sample developed to demonstrate the CCAAS using typescript.",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "repository": "https://github.com/cconsensus/ccaas_sample",
+    "author": "David Faulstich Diniz Reis (david@cconsensus.com.br) - www.cconsensus.com.br",
+    "license": "MIT",
+    "engines": {
+        "node": ">=8",
+        "npm": ">=5"
+    },
+    "scripts": {
+        "lint": "eslint . --ext .ts",
+        "pretest": "npm run lint",
+        "start": "set -x && fabric-chaincode-node start",
+        "build": "tsc",
+        "build:watch": "tsc -w",
+        "prepublishOnly": "npm run build",
+        "docker": "docker build -f ./Dockerfile -t cc-sku-product .",
+        "package": "npm run build && npm shrinkwrap",
+        "start:server-nontls": "set -x && fabric-chaincode-node server --chaincode-address=$CHAINCODE_SERVER_ADDRESS --chaincode-id=$CHAINCODE_ID",
+        "start:server-debug": "set -x && NODE_OPTIONS='--inspect=0.0.0.0:9227' fabric-chaincode-node server --chaincode-address=$CHAINCODE_SERVER_ADDRESS --chaincode-id=$CHAINCODE_ID",
+        "start:server": "set -x && fabric-chaincode-node server --chaincode-address=$CHAINCODE_SERVER_ADDRESS --chaincode-id=$CHAINCODE_ID --chaincode-tls-key-file=/hyperledger/privatekey.pem --chaincode-tls-client-cacert-file=/hyperledger/rootcert.pem --chaincode-tls-cert-file=/hyperledger/cert.pem"
+    },
+    "engineStrict": true,
+    "dependencies": {
+        "@types/jsrsasign": "^10.5.1",
+        "fabric-contract-api": "^2.4.2",
+        "fabric-shim": "^2.4.2",
+        "jsrsasign": "^10.5.20",
+        "jsrsasign-util": "^1.0.5"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.13",
+        "@typescript-eslint/eslint-plugin": "^5.10.1",
+        "@typescript-eslint/parser": "^5.10.1",
+        "eslint": "^8.8.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "eslint-plugin-promise": "^6.0.0",
+        "prettier": "^2.5.1",
+        "typescript": "^4.5.5"
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "index": {
+        "fields": [
+            "tenantId",
+            "sku"
+        ]
+    },
+    "ddoc": "indexTenantIdSkuDoc",
+    "name": "indexTenantIdSku",
+    "type": "json"
+}
