@@ -71,8 +71,8 @@ docker build -t cconsensus/ccskuproductstockaccount:1.0.0 .
 - Remember to set the /etc/hosts where HLF is running to resolve the chaincode external DNS set @ connection.json file.
 
 1. Go to package/ directory (where connection.json and metadata.json is)
-  a. :star: connection.json: file to set where the peer will acess the running chaincode.
-  b. :star: metadata.json: file with chaincode metadata.
+	- :star: connection.json: file to set where the peer will acess the running chaincode.
+	- :star: metadata.json: file with chaincode metadata.
 
 ```bash
 cd package
