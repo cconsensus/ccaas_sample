@@ -1,5 +1,5 @@
 {
-    "address": "{{.peername}}.ccskuproductstockaccount.cconsensus.com.br:9997",
+    "address": "{{.peername}}.ccskuproductstockaccount.somecooldnsdomain.btc:9997",
     "dial_timeout": "10s",
     "tls_required": false
 }

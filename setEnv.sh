@@ -1,4 +1,4 @@
-export CHAINCODE_SERVER_ADDRESS=ccskuproductstockaccount.127.0.0.1.nip.io:9997
-export CHAINCODE_ID=ccskuproductstockaccount:82a9448370182efdd10db774f06ed75499029bde367acbea94a85eb5c41a98d5
+export CHAINCODE_SERVER_ADDRESS=ccskuproductstockaccount.192.168.33.22.nip.io:9997
+export CHAINCODE_ID=ccskuproductstockaccount:25141c2188b022013cdf687645fc6d665d9badfe56210bb94330544772765eb7
 export FABRIC_LOGGING_SPEC=DEBUG
 export CORE_CHAINCODE_LOGGING_LEVEL=DEBUG

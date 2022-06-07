@@ -90,27 +90,28 @@ cd package
 ```bash
 . ./scripts/envVar.sh
 setGlobals 1 
-peer lifecycle chaincode install ~/Projetos/cconsensus_supplychain/chaincodes/cc-sku-product-stock-account/package/ccskuproductstockaccount.tgz
+peer lifecycle chaincode install /home/vagrant/go/src/github.com/davidfdr/ccaas_sample/package/ccskuproductstockaccount.tgz
 setGlobals 2
-peer lifecycle chaincode install ~/Projetos/cconsensus_supplychain/chaincodes/cc-sku-product-stock-account/package/ccskuproductstockaccount.tgz
+peer lifecycle chaincode install /home/vagrant/go/src/github.com/davidfdr/ccaas_sample/package/ccskuproductstockaccount.tgz
 ```
 
 3. Extract the packageId definition:
 
 :sun_with_face: Install package command return:
 ```
-[cli.lifecycle.chaincode] submitInstallProposal -> Chaincode code package identifier: ccskuproductstockaccount:82a9448370182efdd10db774f06ed75499029bde367acbea94a85eb5c41a98d5
+[cli.lifecycle.chaincode] submitInstallProposal -> Chaincode code package identifier: ccskuproductstockaccount:25141c2188b022013cdf687645fc6d665d9badfe56210bb94330544772765eb7
 ```
 4. Update setEnv.sh (if you want to run in debugmode) variable with generated package ID:
 
 ```bash
-export CHAINCODE_SERVER_ADDRESS=ccskuproductstockaccount.127.0.0.1.nip.io:9997
-export CHAINCODE_ID=ccskuproductstockaccount:82a9448370182efdd10db774f06ed75499029bde367acbea94a85eb5c41a98d5
+export CHAINCODE_SERVER_ADDRESS=ccskuproductstockaccount.192.168.33.22.nip.io:9997
+export CHAINCODE_ID=ccskuproductstockaccount:25141c2188b022013cdf687645fc6d665d9badfe56210bb94330544772765eb7
 export FABRIC_LOGGING_SPEC=DEBUG
 export CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
 ```
 :fire: This sample is using [nip.io](https://nip.io/) dns service. Using nip.io we do not need to change the /etc/hosts file.
 @see https://nip.io/
+:fire: Depending on your network router, may b you change the nip.io address and the IP of vagrand ubuntu box.
 5. Starts the container for each peer (Make sure that you have build the chaincode docker image)
 
 ```bash
@@ -139,14 +140,14 @@ npm run start:server-debug
 ```bash
 setGlobals 1
 peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com \
---channelID mychannel --name ccskuproductstockaccount --sequence 1 --version 1.0.1 \
---package-id ccskuproductstockaccount:82a9448370182efdd10db774f06ed75499029bde367acbea94a85eb5c41a98d5 \
+--channelID mychannel --name ccskuproductstockaccount --sequence 1 --version 1.0.2 \
+--package-id ccskuproductstockaccount:25141c2188b022013cdf687645fc6d665d9badfe56210bb94330544772765eb7 \
 --signature-policy "OR('Org1MSP.member', 'Org2MSP.member')" \
 --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 setGlobals 2
 peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com \
---channelID mychannel --name ccskuproductstockaccount --sequence 1 --version 1.0.1 \
---package-id ccskuproductstockaccount:82a9448370182efdd10db774f06ed75499029bde367acbea94a85eb5c41a98d5 \
+--channelID mychannel --name ccskuproductstockaccount --sequence 1 --version 1.0.2 \
+--package-id ccskuproductstockaccount:25141c2188b022013cdf687645fc6d665d9badfe56210bb94330544772765eb7 \
 --signature-policy "OR('Org1MSP.member', 'Org2MSP.member')" \
 --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 ```
@@ -157,7 +158,7 @@ peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameO
 
 ```bash
 peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel \
---name ccskuproductstockaccount --version 1.0.1 --sequence 1 --tls \
+--name ccskuproductstockaccount --version 1.0.2 --sequence 1 --tls \
 --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
 --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
 --signature-policy "OR('Org1MSP.member', 'Org2MSP.member')" \
@@ -170,12 +171,19 @@ peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride o
 ```json
 {
   "tenantId":"tenantId",
-  "sku":"sku",
-  "sequence":1
+  "sku":"sku"
 }
 ```
 ```bash
-peer chaincode query -C mychannel -n ccskuproductstockaccount -c '{"Args":["skuProductStockAccountExists","{\"tenantId\":\"tenantId\",\"sku\":\"sku\",\"sequece\":1}"]}'
+peer chaincode query -C mychannel -n ccskuproductstockaccount -c '{"Args":["skuProductStockAccountExists","{\"tenantId\":\"tenantId\",\"sku\":\"sku\"}"]}'
+```
+
+```bash
+peer chaincode invoke -C mychannel -n ccskuproductstockaccount -c '{"Args":["initLedger"]}' --tls \
+--cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
+```
+```bash
+peer chaincode query -C mychannel -n ccskuproductstockaccount -c '{"Args":["getSkuProductStockAccountByKey","{\"tenantId\":\"tenantId001\",\"sku\":\"0013\"}"]}'
 ```
 
 #### ORG1
